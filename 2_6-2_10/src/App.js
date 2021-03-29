@@ -6,11 +6,22 @@ const App = () => {
   ]) 
   const [ newName, setNewName ] = useState('')
 
+  const inPersons = (name) => {
+    for (let person of persons) {
+      if (person.name === name) return true
+    }
+    return false
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
-    const personObject = {name: newName}
-    setPersons(persons.concat(personObject))
-    setNewName('')
+    if (inPersons(newName)) {
+      alert(`Duplicate name ${newName}`)
+    }
+    else {
+      const personObject = {name: newName}
+      setPersons(persons.concat(personObject))
+      setNewName('')
+    }
   }
   return (
     <div>
