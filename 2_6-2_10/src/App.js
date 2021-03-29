@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 
 const App = () => {
   const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '111-111-111'}
+    { name: 'Arto Hellas', number: '040-123456' }
   ]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
+  const [ searchText, setSearchText] = useState('')
 
   const inPersons = (name) => {
     for (let person of persons) {
@@ -28,9 +29,13 @@ const App = () => {
       setNewNumber('')
     }
   }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <label htmlFor="search">filter: </label>
+      <input name="search" onChange={event => setSearchText(event.target.value)} value={searchText}/>
+      <h2>Add a new</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">name: </label>
@@ -45,8 +50,11 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(person => 
-        <p key={person.name}>{person.name} {person.number}</p>  
+      {persons.map(person => {
+        if (person.name.toLowerCase().includes(searchText) || searchText === '')
+        return (<p key={person.name}>{person.name} {person.number}</p>)  
+        else return ""
+      }
       )}
     </div>
   )
