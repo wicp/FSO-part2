@@ -9,9 +9,10 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ searchText, setSearchText] = useState('')
+  const ENDPOINT = 'http://localhost:3001/persons'
 
   useEffect(()=> {
-    axios.get('http://localhost:3001/persons')
+    axios.get(ENDPOINT)
     .then(response => setPersons(response.data))
   },[])
 
@@ -31,7 +32,9 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
-      setPersons(persons.concat(personObject))
+      axios.post(ENDPOINT,personObject)
+      .then(response => setPersons(persons.concat(response.data)))
+      .catch(error => alert('Could not update notes'))
       setNewName('')
       setNewNumber('')
     }
