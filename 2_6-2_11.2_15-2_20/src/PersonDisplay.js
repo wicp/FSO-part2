@@ -10,7 +10,7 @@ const PersonDisplay = ({persons, searchText, deletePerson}) => {
             {persons.map(person => {
                 if (person.name.toLowerCase().includes(searchText) || searchText === '')
                 return (
-                    <p key={person.name}>{person.name} {person.number}
+                    <p key={person.id}>{person.name} {person.number}
                         <button onClick={() => confirmDelete(person)}>Delete</button>
                     </p>
                 )

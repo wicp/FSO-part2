@@ -13,6 +13,10 @@ create: person => {
 
 delete: person => {
     return axios.delete(ENDPOINT+'/'+person.id)
+},
+
+update: person => {
+    return axios.put(ENDPOINT+'/'+person.id,person)
 }
 }
 

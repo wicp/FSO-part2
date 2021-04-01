@@ -17,14 +17,25 @@ const App = () => {
 
   const inPersons = (name) => {
     for (let person of persons) {
-      if (person.name === name) return true
+      if (person.name === name) return person
     }
     return false
   }
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (inPersons(newName)) {
-      alert(`Duplicate name ${newName}`)
+    const oldPerson = inPersons(newName)
+    if (oldPerson) {
+      const confirmation = window.confirm(
+        `${newName} is already in the phonebook, replace old number with new?`
+      )
+      if (confirmation) {
+        dbservice.update({...oldPerson, number: newNumber})
+        .then(response => setPersons(persons.map( person => {
+          if (person.name === newName) return response.data
+          else return person
+        })))
+        .catch(error => alert('Could not update number'))
+      }
     }
     else {
       const personObject = {
@@ -33,13 +44,12 @@ const App = () => {
       }
       dbservice.create(personObject)
       .then(response => setPersons(persons.concat(response.data)))
-      .catch(error => alert('Could not update notes'))
-      setNewName('')
-      setNewNumber('')
+      .catch(error => alert('Could not update phonebook'))
     }
+    setNewName('')
+    setNewNumber('')
   }
   const deletePerson = (deletedPerson) => {
-    console.log('deleting',deletedPerson)
     dbservice.delete(deletedPerson)
     setPersons(persons.filter(person => person.id !== deletedPerson.id))
   }
