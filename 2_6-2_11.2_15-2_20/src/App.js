@@ -2,17 +2,16 @@ import React, { useState, useEffect } from 'react'
 import Filter from './Filter'
 import Form from './Form'
 import PersonDisplay from './PersonDisplay'
-import axios from 'axios'
+import dbservice from './services/dbservice'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ searchText, setSearchText] = useState('')
-  const ENDPOINT = 'http://localhost:3001/persons'
 
   useEffect(()=> {
-    axios.get(ENDPOINT)
+    dbservice.getAll()
     .then(response => setPersons(response.data))
   },[])
 
@@ -32,7 +31,7 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
-      axios.post(ENDPOINT,personObject)
+      dbservice.create(personObject)
       .then(response => setPersons(persons.concat(response.data)))
       .catch(error => alert('Could not update notes'))
       setNewName('')
