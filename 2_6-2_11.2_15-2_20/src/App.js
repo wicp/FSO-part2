@@ -38,6 +38,11 @@ const App = () => {
       setNewNumber('')
     }
   }
+  const deletePerson = (deletedPerson) => {
+    console.log('deleting',deletedPerson)
+    dbservice.delete(deletedPerson)
+    setPersons(persons.filter(person => person.id !== deletedPerson.id))
+  }
 
   return (
     <div>
@@ -47,7 +52,7 @@ const App = () => {
       <Form handleSubmit={handleSubmit} setNewName={setNewName} setNewNumber={setNewNumber}
             newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <PersonDisplay persons={persons} searchText={searchText} />
+      <PersonDisplay persons={persons} searchText={searchText} deletePerson={deletePerson}/>
     </div>
   )
 }

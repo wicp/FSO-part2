@@ -9,6 +9,10 @@ getAll: () => {
 
 create: person => {
     return axios.post(ENDPOINT, person)
+},
+
+delete: person => {
+    return axios.delete(ENDPOINT+'/'+person.id)
 }
 }
 
