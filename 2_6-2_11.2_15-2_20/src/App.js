@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Filter from './Filter'
-import Form from './Form'
-import PersonDisplay from './PersonDisplay'
+import Filter from './components/Filter'
+import Form from './components/Form'
+import Notification from './components/Notification'
+import PersonDisplay from './components/PersonDisplay'
 import dbservice from './services/dbservice'
 
 const App = () => {
@@ -9,11 +10,17 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ searchText, setSearchText] = useState('')
+  const [ notification, setNotification] = useState('')
 
   useEffect(()=> {
     dbservice.getAll()
     .then(response => setPersons(response.data))
   },[])
+
+  const newNotification = (message, timeout) => {
+    setNotification(message)
+    if (timeout) setTimeout(() => setNotification(''),timeout)
+  }
 
   const inPersons = (name) => {
     for (let person of persons) {
@@ -30,10 +37,14 @@ const App = () => {
       )
       if (confirmation) {
         dbservice.update({...oldPerson, number: newNumber})
-        .then(response => setPersons(persons.map( person => {
-          if (person.name === newName) return response.data
-          else return person
-        })))
+        .then(response => {
+          setPersons(persons.map( person => {
+            if (person.name === newName) return response.data
+            else return person
+          }))
+          newNotification(`Updated number for ${response.data.name}`,3000)
+        }
+        )
         .catch(error => alert('Could not update number'))
       }
     }
@@ -43,7 +54,10 @@ const App = () => {
         number: newNumber,
       }
       dbservice.create(personObject)
-      .then(response => setPersons(persons.concat(response.data)))
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        newNotification(`Added ${response.data.name}`,3000)
+      })
       .catch(error => alert('Could not update phonebook'))
     }
     setNewName('')
@@ -56,6 +70,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} />
       <h2>Phonebook</h2>
       <Filter searchText={searchText} setSearchText={setSearchText} />
       <h2>Add a new</h2>
