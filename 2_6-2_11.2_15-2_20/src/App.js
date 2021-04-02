@@ -10,16 +10,16 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ searchText, setSearchText] = useState('')
-  const [ notification, setNotification] = useState('')
+  const [ notification, setNotification] = useState([null, null])
 
   useEffect(()=> {
     dbservice.getAll()
     .then(response => setPersons(response.data))
   },[])
 
-  const newNotification = (message, timeout) => {
-    setNotification(message)
-    if (timeout) setTimeout(() => setNotification(''),timeout)
+  const newNotification = (message, kind, timeout) => {
+    setNotification([message,kind])
+    if (timeout) setTimeout(() => setNotification([null, null]),timeout)
   }
 
   const inPersons = (name) => {
@@ -42,10 +42,10 @@ const App = () => {
             if (person.name === newName) return response.data
             else return person
           }))
-          newNotification(`Updated number for ${response.data.name}`,3000)
+          newNotification(`Updated number for ${response.data.name}`,'info',3000)
         }
         )
-        .catch(error => alert('Could not update number'))
+        .catch(error => newNotification('Could not update number','error'))
       }
     }
     else {
@@ -56,21 +56,22 @@ const App = () => {
       dbservice.create(personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
-        newNotification(`Added ${response.data.name}`,3000)
+        newNotification(`Added ${response.data.name}`,'info',3000)
       })
-      .catch(error => alert('Could not update phonebook'))
+      .catch(error => newNotification('Could not update phonebook','error'))
     }
     setNewName('')
     setNewNumber('')
   }
   const deletePerson = (deletedPerson) => {
     dbservice.delete(deletedPerson)
-    setPersons(persons.filter(person => person.id !== deletedPerson.id))
+    .then(setPersons(persons.filter(person => person.id !== deletedPerson.id)))
+    .catch(error => newNotification(`Could not delete ${deletedPerson.name}`,'error'))
   }
 
   return (
     <div>
-      <Notification message={notification} />
+      <Notification message={notification[0]} kind={notification[1]}/>
       <h2>Phonebook</h2>
       <Filter searchText={searchText} setSearchText={setSearchText} />
       <h2>Add a new</h2>
