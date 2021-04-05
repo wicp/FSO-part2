@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ENDPOINT = 'http://localhost:3001/persons'
+const ENDPOINT = '/api/persons'
 
 const dbservice = {
 getAll: () => {
